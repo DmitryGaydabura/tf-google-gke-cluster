@@ -16,10 +16,16 @@ jobs:
         with:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
       - name: Checkout base branch
         uses: actions/checkout@v3
         with:
           ref: '${{ github.event.pull_request.base.ref }}'
+
+      - name: Terraform Init (Base)
+        run: terraform init -backend=false
 
       - name: Generate Infracost cost estimate baseline
         run: |
@@ -29,6 +35,9 @@ jobs:
 
       - name: Checkout pr branch
         uses: actions/checkout@v3
+
+      - name: Terraform Init (PR)
+        run: terraform init -backend=false
 
       - name: Generate Infracost cost estimate diff
         run: |
